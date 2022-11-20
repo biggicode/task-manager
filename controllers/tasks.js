@@ -33,10 +33,6 @@ const getTask = async (req, res) => {
   }
 };
 
-const updateTask = (req, res) => {
-  res.send("Update task");
-};
-
 const deleteTask = async (req, res) => {
   try {
     const { id: taskID } = req.params;
@@ -48,6 +44,25 @@ const deleteTask = async (req, res) => {
 
     // res.status(200).json({ task });
     res.status(200).json({ task: null, status: "succes" });
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
+};
+
+const updateTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
+
+    const task = await Task.findOneAndUpdate({ _id: taskID }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!task) {
+      res.status(404).json({ msg: `Task with id ${taskID} was not found` });
+    }
+
+    res.status(200).json({ task });
   } catch (error) {
     res.status(500).json({ msg: error });
   }
